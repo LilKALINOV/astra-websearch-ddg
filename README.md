@@ -28,8 +28,8 @@
 ## ✨ Features
 
 - **Live search** – Fetch up‑to‑date results from DuckDuckGo's HTML search endpoint.
-- **Configurable result count** – Choose between `auto` (default 5) or any step‑of‑5 value from 5 to 50.
-- **Language support** – Pick from `auto` (matches your Astra UI language) or explicit codes: `en‑us`, `ru‑ru`, `de‑de`, `fr‑fr`, `es‑es`.
+- **Configurable result count** – Choose between auto (default 5) or any step‑of‑5 value from 5 to 50.
+- **Language support** – Pick from auto (matches your Astra UI language) or explicit codes: en‑us, ru‑ru, de‑de, fr‑fr, es‑es.
 - **Instant Answer fallback** – If the HTML search returns no results, the plugin automatically falls back to DuckDuckGo's Instant Answer API (e.g. for definitions, calculations).
 - **Built‑in localisation** – Error and status messages are provided in English, Russian, and Ukrainian.
 - **Tool‑only design** – Does not add any panels or UI elements; it works purely as a callable tool.
@@ -52,12 +52,12 @@ If you are a free‑tier Astra user, this plugin is essential to unlock the full
 
 Here’s a step‑by‑step breakdown of the search flow:
 
-1. **User calls the tool** – via chat command `/duckduckgo_search` with a query, optional `limit`, and `lang`.
+1. **User calls the tool** – via chat command /duckduckgo_search with a query, optional limit, and lang.
 2. **Build HTTP request** – the plugin constructs a GET request to DuckDuckGo's HTML endpoint (`https://duckduckgo.com/html/`) with the query and language parameters.
-3. **Fetch the page** – using the `requests` library (simple GET).
-4. **Parse HTML** – with `BeautifulSoup`, extract titles and URLs from the result list.
+3. **Fetch the page** – using the requests library (simple GET).
+4. **Parse HTML** – with BeautifulSoup, extract titles and URLs from the result list.
 5. **Fallback if empty** – if no results are found, the plugin queries DuckDuckGo's Instant Answer API (JSON) to return a definition‑style answer.
-6. **Return results** – a newline‑separated list of `Title – URL` strings (or a single definition) is sent back to Astra for display in the chat.
+6. **Return results** – a newline‑separated list of Title – URL strings (or a single definition) is sent back to Astra for display in the chat.
 
 ---
 
