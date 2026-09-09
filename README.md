@@ -1,185 +1,101 @@
 # DuckDuckGo Web Search – Astra Plugin
 
-A **tool plugin** for the Astra AI desktop assistant that performs live web searches via DuckDuckGo. It returns concise title‑URL pairs, supports configurable result limits and language selection, and provides built‑in localisation for English, Russian, and Ukrainian.
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/LilKALINOV/astra-websearch-ddg/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Build Status](https://github.com/LilKALINOV/astra-websearch-ddg/actions/workflows/release.yml/badge.svg)](https://github.com/LilKALINOV/astra-websearch-ddg/actions/workflows/release.yml)
+[![Astra Plugin](https://img.shields.io/badge/Astra-Plugin-purple)](https://github.com/astra-ai/astra)
+
+**Real‑time web search** directly inside your Astra AI assistant – powered by DuckDuckGo, without any built‑in limits.
+
+![icon](icon.svg)
 
 ---
 
-## 📦 Features
+## 📖 Table of Contents
 
-- **Real‑time web search** using DuckDuckGo’s HTML endpoint (works for any query).  
-- **Result limit dropdown** – `auto` (default 5) or any of `5, 10, 15, 20, 25, 30, 35, 40, 45, 50`.
-- **Language selection** – `auto` or the language codes `en‑us`, `ru‑ru`, `de‑de`, `fr‑fr`, `es‑es`.
-- **Fallback to Instant Answer API** for definition‑style queries when the HTML search returns no results.
-- **In‑code localisation** of error messages (`error_missing_query`, `search_failed`, `no_results`) for EN, RU and UK.
-- **No UI contribution** – the plugin works purely as a tool, so it does not add panels or tabs.
-
----
-
-## 🤔 What it does and why you need it
-
-Astra ships without a built‑in web‑search capability. This plugin gives the assistant the ability to fetch the latest information from the web, complementing its local knowledge and LLM‑generated answers. Use it when you need up‑to‑date facts, links, or a quick overview of a topic.
+- [Features](#-features)
+- [Why This Plugin?](#-why-this-plugin)
+- [How It Works](#-how-it-works)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [License](#-license)
+- [Author](#-author)
 
 ---
 
-## 🔄 How a query turns into results
+## ✨ Features
 
-1. The user calls the tool `duckduckgo_search` with a query, optional `limit`, and optional `lang`.
-2. The plugin builds a request to DuckDuckGo’s **HTML search endpoint** (`https://duckduckgo.com/html/`) adding the query and language parameters.
-3. The HTML page is fetched via `requests` (a simple GET request).
-4. The response is parsed with `BeautifulSoup` to extract the result titles and URLs.
-5. If the HTML search yields no results, the plugin falls back to DuckDuckGo’s **Instant Answer API** (JSON) to provide a definition‑style answer.
-6. The final list of `Title – URL` strings (or a single definition) is returned to Astra for display in the chat.
-
----
-
-## 📡 What it requires and why
-
-| Resource | Reason |
-|----------|--------|
-| Outbound network access to `duckduckgo.com:443` | The plugin must contact DuckDuckGo’s public search endpoint to retrieve results. All traffic originates from the plugin process; Astra never sees the query payload or response.
-
-No other host resources are needed.
+- **Live search** – Fetch up‑to‑date results from DuckDuckGo's HTML search endpoint.
+- **Configurable result count** – Choose between `auto` (default 5) or any step‑of‑5 value from 5 to 50.
+- **Language support** – Pick from `auto` (matches your Astra UI language) or explicit codes: `en‑us`, `ru‑ru`, `de‑de`, `fr‑fr`, `es‑es`.
+- **Instant Answer fallback** – If the HTML search returns no results, the plugin automatically falls back to DuckDuckGo's Instant Answer API (e.g. for definitions, calculations).
+- **Built‑in localisation** – Error and status messages are provided in English, Russian, and Ukrainian.
+- **Tool‑only design** – Does not add any panels or UI elements; it works purely as a callable tool.
+- **No usage limits** – Unlike Astra's built‑in search (which is restricted in the free version), this plugin gives you unlimited searches via DuckDuckGo.
 
 ---
 
-## 🔐 Permissions
+## 🤔 Why This Plugin?
 
-The plugin does not request any additional host‑side permissions. It runs with the default sandboxed capabilities (`tools = true`). If you later add high‑risk permissions, the registry will require an explicit reason and a review.
+Astra **does** include a built‑in web search, but the free version has **daily usage limits** (they are quite generous, but they exist). If you frequently exceed those limits or simply want more control over your searches, this plugin provides an alternative:
 
----
+- Unlimited search requests (no daily quotas).
+- Full control over result count and language.
+- Access to the same high‑quality results that DuckDuckGo provides.
+- A fallback to Instant Answers for quick facts.
 
-## ⚙️ Configuration (Settings page)
-
-Astra automatically renders a settings page from the JSON‑Schema defined in `plugin.toml`:
-
-```toml
-[config]
-schema = "{ \"type\": \"object\", \"properties\": { \"default_limit\": { \"type\": \"string\", \"enum\": [\"auto\", \"5\", \"10\", \"15\", \"20\", \"25\", \"30\", \"35\", \"40\", \"45\", \"50\"], \"default\": \"auto\", \"title\": \"Limit of results\" }, \"default_lang\": { \"type\": \"string\", \"enum\": [\"auto\", \"en-us\", \"ru-ru\", \"de-de\", \"fr-fr\", \"es-es\"], \"default\": \"auto\", \"title\": \"Language\" } } }"
-```
-
-- **`default_limit`** – used when the user supplies `limit=auto`. Adjust to a higher default if you frequently need more results.
-- **`default_lang`** – used when `lang=auto`. The plugin will pick the language of the user's Astra UI unless overridden.
-
-These defaults can be changed in **Settings → Plugins → DuckDuckGo Web Search**.
+If you are a free‑tier Astra user, this plugin is essential to unlock the full potential of web‑augmented conversations.
 
 ---
 
-## 🌐 Localisation
+## 🔄 How It Works
 
-Error and status messages are provided in three languages.  The plugin selects the language based on the `lang` argument (falling back to English).  The keys are:
+Here’s a step‑by‑step breakdown of the search flow:
 
-- `error_missing_query`
-- `search_failed`
-- `no_results`
-
-The mapping lives in `src/plugin.py` under the `_LOCALIZED` dictionary.
-
----
-
-## 🛠 Development workflow
-
-```bash
-# Install the Astra plugin SDK (if not already installed)
-astra-plugin install-cli
-
-# Install runtime dependencies
-pip install -r requirements.txt
-
-# Run the test suite (includes mock daemon checks)
-astra-plugin test .
-
-# Build a bundle (CI does this automatically on tag)
-astra-plugin build .
-```
-
-The repository contains a GitHub Actions workflow (`.github/workflows/release.yml`) generated by `astra-plugin init-ci`.  When a tag `vX.Y.Z` is pushed, the workflow:
-1. Builds the `.astraplugin` bundle.
-2. Attests it with a signed Astra release workflow.
-3. Publishes a GitHub Release containing the bundle.
+1. **User calls the tool** – via chat command `/duckduckgo_search` with a query, optional `limit`, and `lang`.
+2. **Build HTTP request** – the plugin constructs a GET request to DuckDuckGo's HTML endpoint (`https://duckduckgo.com/html/`) with the query and language parameters.
+3. **Fetch the page** – using the `requests` library (simple GET).
+4. **Parse HTML** – with `BeautifulSoup`, extract titles and URLs from the result list.
+5. **Fallback if empty** – if no results are found, the plugin queries DuckDuckGo's Instant Answer API (JSON) to return a definition‑style answer.
+6. **Return results** – a newline‑separated list of `Title – URL` strings (or a single definition) is sent back to Astra for display in the chat.
 
 ---
 
-## 📦 Publishing (for the author)
+## 📡 Requirements
 
-1. **Create a public GitHub repository** (already done).  The repo must be public for the registry to verify the attestation.
-2. **Commit all files** and push the first tag:
-   ```bash
-   astra-plugin version 0.1.0   # bumps version in manifests
-   git add -A && git commit -m "Release 0.1.0"
-   git tag v0.1.0 && git push --follow-tags
-   ```
-3. CI builds and signs the bundle automatically.
-4. Run the listing command (or let CI do it):
-   ```bash
-   astra-plugin publish
-   ```
-   This opens a pre‑filled issue on the Astra registry.  Submit it and wait for the bot to mark the plugin as **published** (first listings are held for a brief manual review).
-5. Future releases only require bumping the version, tagging, and pushing – the CI and registry handle the rest.
+| Resource | Purpose |
+|----------|---------|
+| **Outbound network access** to `duckduckgo.com:443` | Required to contact DuckDuckGo's public search endpoint. All traffic originates from the plugin process; Astra never sees the query payload or response. |
+| **Python 3.8+** | The plugin is written in Python and runs within Astra's plugin runtime. |
+| **Astra Desktop Assistant** (v0.8.0 or later) | The plugin targets the Astra plugin SDK. |
+
+No additional host‑side permissions are needed – the plugin runs with the default sandboxed capabilities (`tools = true`).
 
 ---
 
 ## 📦 Installation
 
-### Development / local testing
+### From the Astra Catalogue (Recommended)
 
-1. **Enable unsigned plugins** in Astra: `Settings → Privacy → "Allow unsigned plugins"`.
-2. Clone the repository (or use the folder you already have) and load it in Astra:
-   ```
-   D:\Plagin\astra\Search\astra-websearch-ddg
-   ```
-3. The plugin will appear under **Plugins → Dev**. Enable it and you can call the tool in chat.
+1. Open Astra → **Plugins** → **Browse**.
+2. Search for "DuckDuckGo Web Search".
+3. Click **Install** – the plugin will be automatically added and ready to use.
 
-### From the Astra catalogue (once published)
+### Manual / Development Installation
 
-After the author publishes the plugin, it will be searchable in **Plugins → Browse**. Click **Install** and the plugin will be added automatically.
-
+1. **Enable unsigned plugins** in Astra:  
+   `Settings` → `Privacy` → **Allow unsigned plugins** (toggle on).
+2. Clone this repository:
+   ```bash
+   git clone https://github.com/LilKALINOV/astra-websearch-ddg.git
 ---
 
-## 📚 Usage
-
-The tool is called `duckduckgo_search`.  Example chat commands:
-
-```text
-/duckduckgo_search query="погода в Москве" limit=20 lang="ru-ru"
-```
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `query`   | string | **required** | Search term. |
-| `limit`   | `auto` or 5‑50 step 5 | `auto` (⇒ 5) | Number of results to return. |
-| `lang`    | language code | `auto` | DuckDuckGo language (`en‑us`, `ru‑ru`, `de‑de`, `fr‑fr`, `es‑es`). |
-
-The command returns a newline‑separated list of `Title – URL` strings.
-
----
-
-## 🚧 Limitations
-
-- **Network required** – every request goes to DuckDuckGo’s servers.
-- **Result cap** – maximum 50 results; higher limits are not supported.
-- **HTML parsing** – the plugin relies on DuckDuckGo’s public HTML layout; a future change to that page could break parsing until the plugin is updated.
-- **Tool‑only** – the plugin does not provide UI panels or visual contributions.
-
----
-
-## 📂 Files
-
-- `plugin.toml` – manifest with description, config schema, and capabilities.
-- `src/plugin.py` – core implementation, localisation, and request handling.
-- `README.md` – this documentation.
-- `LICENSE` – MIT license text.
-- `icon.svg` / `icon.png` – plugin icons.
-- `.github/workflows/release.yml` – CI workflow for building and attesting releases.
-- `requirements.txt` / `requirements.lock` – Python dependencies.
-- `tests/test_plugin.py` – basic test suite.
-
----
-
-## 📄 License
+   ## 📄 License
 
 This plugin is released under the **MIT License**.  See `LICENSE` for the full text.
 
 ---
+
 
 ## 👤 Author
 
@@ -192,6 +108,5 @@ Discord: bass_kalinov
 ## 🙏 Acknowledgements
 
 - DuckDuckGo for the public search endpoint.
-- The Astra team for the plugin SDK and publishing infrastructure.
 
 Feel free to open issues or submit pull requests if you find bugs or have ideas for improvements.
