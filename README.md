@@ -84,15 +84,18 @@ No additional host‑side permissions are needed – the plugin runs with the de
 ### Manual / Development Installation
 
 1. **Enable unsigned plugins** in Astra:  
-   `Settings` → `Privacy` → **Allow unsigned plugins** (toggle on).
+   Settings → Privacy → **Allow unsigned plugins** (toggle on).
 2. Clone this repository:
    ```bash
    git clone https://github.com/LilKALINOV/astra-websearch-ddg.git
+   cd astra-websearch-ddg
+   cargo build --release
+   astra-plugin build
 ---
 
    ## 📄 License
 
-This plugin is released under the **MIT License**.  See `LICENSE` for the full text.
+This plugin is released under the **MIT License**.  See LICENSE for the full text.
 
 ---
 
