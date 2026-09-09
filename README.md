@@ -39,8 +39,6 @@
 
 ## 🤔 Why This Plugin?
 
-Astra **does** include a built‑in web search, but the free version has **daily usage limits** (they are quite generous, but they exist). If you frequently exceed those limits or simply want more control over your searches, this plugin provides an alternative:
-
 - Unlimited search requests (no daily quotas).
 - Full control over result count and language.
 - Access to the same high‑quality results that DuckDuckGo provides.
