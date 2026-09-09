@@ -29,7 +29,7 @@
 
 - **Live search** – Fetch up‑to‑date results from DuckDuckGo's HTML search endpoint.
 - **Configurable result count** – Choose between auto (default 5) or any step‑of‑5 value from 5 to 50.
-- **Language support** – Pick from auto (matches your Astra UI language) or explicit codes: en‑us, ru‑ru, de‑de, fr‑fr, es‑es.
+- **Language support** – Pick from auto (matches your Astra UI language) or explicit codes: en, ru, de, fr, es.
 - **Instant Answer fallback** – If the HTML search returns no results, the plugin automatically falls back to DuckDuckGo's Instant Answer API (e.g. for definitions, calculations).
 - **Built‑in localisation** – Error and status messages are provided in English, Russian, and Ukrainian.
 - **Tool‑only design** – Does not add any panels or UI elements; it works purely as a callable tool.
