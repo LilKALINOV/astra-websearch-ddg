@@ -15,38 +15,36 @@ A **tool plugin** for the Astra AI desktop assistant that performs live web sear
 
 ---
 
-## 🔧 Installation
+## 🤔 What it does and why you need it
 
-### Development / local testing
-
-1. **Enable unsigned plugins** in Astra: `Settings → Privacy → "Allow unsigned plugins"`.
-2. Clone the repository (or use the folder you already have) and load it in Astra:
-   ```
-   D:\Plagin\astra\Search\astra-websearch-ddg
-   ```
-3. The plugin will appear under **Plugins → Dev**. Enable it and you can call the tool in chat.
-
-### From the Astra catalogue (once published)
-
-After the author publishes the plugin, it will be searchable in **Plugins → Browse**. Click **Install** and the plugin will be added automatically.
+Astra ships without a built‑in web‑search capability. This plugin gives the assistant the ability to fetch the latest information from the web, complementing its local knowledge and LLM‑generated answers. Use it when you need up‑to‑date facts, links, or a quick overview of a topic.
 
 ---
 
-## 📚 Usage
+## 🔄 How a query turns into results
 
-The tool is called `duckduckgo_search`.  Example chat commands:
+1. The user calls the tool `duckduckgo_search` with a query, optional `limit`, and optional `lang`.
+2. The plugin builds a request to DuckDuckGo’s **HTML search endpoint** (`https://duckduckgo.com/html/`) adding the query and language parameters.
+3. The HTML page is fetched via `requests` (a simple GET request).
+4. The response is parsed with `BeautifulSoup` to extract the result titles and URLs.
+5. If the HTML search yields no results, the plugin falls back to DuckDuckGo’s **Instant Answer API** (JSON) to provide a definition‑style answer.
+6. The final list of `Title – URL` strings (or a single definition) is returned to Astra for display in the chat.
 
-```text
-/duckduckgo_search query="погода в Москве" limit=20 lang="ru-ru"
-```
+---
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `query`   | string | **required** | Search term. |
-| `limit`   | `auto` or 5‑50 step 5 | `auto` (⇒ 5) | Number of results to return. |
-| `lang`    | language code | `auto` | DuckDuckGo language (`en‑us`, `ru‑ru`, `de‑de`, `fr‑fr`, `es‑es`). |
+## 📡 What it requires and why
 
-The command returns a newline‑separated list of `Title – URL` strings.
+| Resource | Reason |
+|----------|--------|
+| Outbound network access to `duckduckgo.com:443` | The plugin must contact DuckDuckGo’s public search endpoint to retrieve results. All traffic originates from the plugin process; Astra never sees the query payload or response.
+
+No other host resources are needed.
+
+---
+
+## 🔐 Permissions
+
+The plugin does not request any additional host‑side permissions. It runs with the default sandboxed capabilities (`tools = true`). If you later add high‑risk permissions, the registry will require an explicit reason and a review.
 
 ---
 
@@ -59,10 +57,10 @@ Astra automatically renders a settings page from the JSON‑Schema defined in `p
 schema = "{ \"type\": \"object\", \"properties\": { \"default_limit\": { \"type\": \"string\", \"enum\": [\"auto\", \"5\", \"10\", \"15\", \"20\", \"25\", \"30\", \"35\", \"40\", \"45\", \"50\"], \"default\": \"auto\", \"title\": \"Limit of results\" }, \"default_lang\": { \"type\": \"string\", \"enum\": [\"auto\", \"en-us\", \"ru-ru\", \"de-de\", \"fr-fr\", \"es-es\"], \"default\": \"auto\", \"title\": \"Language\" } } }"
 ```
 
-- **`default_limit`** – the limit used when `limit=auto` is supplied.
-- **`default_lang`** – the language used when `lang=auto` is supplied.
+- **`default_limit`** – used when the user supplies `limit=auto`. Adjust to a higher default if you frequently need more results.
+- **`default_lang`** – used when `lang=auto`. The plugin will pick the language of the user's Astra UI unless overridden.
 
-These defaults can be changed in Astra’s Settings → Plugins → *DuckDuckGo Web Search*.
+These defaults can be changed in **Settings → Plugins → DuckDuckGo Web Search**.
 
 ---
 
@@ -120,6 +118,63 @@ The repository contains a GitHub Actions workflow (`.github/workflows/release.ym
 
 ---
 
+## 📦 Installation
+
+### Development / local testing
+
+1. **Enable unsigned plugins** in Astra: `Settings → Privacy → "Allow unsigned plugins"`.
+2. Clone the repository (or use the folder you already have) and load it in Astra:
+   ```
+   D:\Plagin\astra\Search\astra-websearch-ddg
+   ```
+3. The plugin will appear under **Plugins → Dev**. Enable it and you can call the tool in chat.
+
+### From the Astra catalogue (once published)
+
+After the author publishes the plugin, it will be searchable in **Plugins → Browse**. Click **Install** and the plugin will be added automatically.
+
+---
+
+## 📚 Usage
+
+The tool is called `duckduckgo_search`.  Example chat commands:
+
+```text
+/duckduckgo_search query="погода в Москве" limit=20 lang="ru-ru"
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `query`   | string | **required** | Search term. |
+| `limit`   | `auto` or 5‑50 step 5 | `auto` (⇒ 5) | Number of results to return. |
+| `lang`    | language code | `auto` | DuckDuckGo language (`en‑us`, `ru‑ru`, `de‑de`, `fr‑fr`, `es‑es`). |
+
+The command returns a newline‑separated list of `Title – URL` strings.
+
+---
+
+## 🚧 Limitations
+
+- **Network required** – every request goes to DuckDuckGo’s servers.
+- **Result cap** – maximum 50 results; higher limits are not supported.
+- **HTML parsing** – the plugin relies on DuckDuckGo’s public HTML layout; a future change to that page could break parsing until the plugin is updated.
+- **Tool‑only** – the plugin does not provide UI panels or visual contributions.
+
+---
+
+## 📂 Files
+
+- `plugin.toml` – manifest with description, config schema, and capabilities.
+- `src/plugin.py` – core implementation, localisation, and request handling.
+- `README.md` – this documentation.
+- `LICENSE` – MIT license text.
+- `icon.svg` / `icon.png` – plugin icons.
+- `.github/workflows/release.yml` – CI workflow for building and attesting releases.
+- `requirements.txt` / `requirements.lock` – Python dependencies.
+- `tests/test_plugin.py` – basic test suite.
+
+---
+
 ## 📄 License
 
 This plugin is released under the **MIT License**.  See `LICENSE` for the full text.
@@ -130,7 +185,7 @@ This plugin is released under the **MIT License**.  See `LICENSE` for the full t
 
 **Lil KALINOV**  
 GitHub: https://github.com/LilKALINOV  
-Email: LilKALINOV@users.noreply.github.com
+Discord: bass_kalinov
 
 ---
 
