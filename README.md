@@ -6,6 +6,7 @@
 [![Astra Plugin](https://img.shields.io/badge/Astra-Plugin-purple)](https://github.com/astra-ai/astra)
 
 **Real‑time web search** directly inside your Astra AI assistant – powered by DuckDuckGo, without any built‑in limits.
+
 ---
 
 ![icon](icon.svg)
