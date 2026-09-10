@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/LilKALINOV/astra-websearch-ddg/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Build Status](https://github.com/LilKALINOV/astra-websearch-ddg/actions/workflows/release.yml/badge.svg)](https://github.com/LilKALINOV/astra-websearch-ddg/actions/workflows/release.yml)
-[![Astra Plugin](https://img.shields.io/badge/Astra-Plugin-purple)](https://github.com/astra-ai/astra)
+[![Astra Plugin](https://img.shields.io/badge/Astra-Plugin-purple)](https://github.com/mihailinl/AstraPlugins)
 
 **Real‑time web search** directly inside your Astra AI assistant – powered by DuckDuckGo, without any built‑in limits.
 
