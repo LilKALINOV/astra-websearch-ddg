@@ -1,0 +1,10 @@
+[package]
+name = "astra_websearch_ddg"
+version = "0.1.1"
+edition = "2021"
+description = "DuckDuckGo web-search tool for Astra"
+
+[dependencies]
+astra-plugin-sdk = "0.7"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+scraper = "0.22"

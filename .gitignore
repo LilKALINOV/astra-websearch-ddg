@@ -1,7 +1,5 @@
 # Build artifacts
 *.astraplugin
-
-__pycache__/
-*.pyc
+target/
 .venv/
 requirements.lock

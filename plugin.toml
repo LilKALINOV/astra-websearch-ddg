@@ -5,14 +5,12 @@ schema = "{ \"type\": \"object\", \"properties\": { \"default_limit\": { \"type\
 [plugin]
 id = "astra-websearch-ddg"
 name = "DuckDuckGo Web Search"
-version = "0.1.0"
+version = "0.1.1"
 author = "Lil KALINOV"
 description = "DuckDuckGo web‑search tool for Astra – returns titles and URLs with configurable limit and language options."
 
 [entry]
-command = "python"
-args = ["-m", "src.plugin"]
-runtimes = ["python"]
+command = "target/release/astra_websearch_ddg"
 
 # `[capabilities]` is what the daemon may call INTO this plugin.
 [capabilities]
